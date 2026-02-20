@@ -1,0 +1,11 @@
+﻿.vs
+.vs/
+
+out
+out/
+
+build
+build/
+
+.idea
+.idea/
