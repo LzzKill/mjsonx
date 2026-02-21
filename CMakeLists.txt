@@ -62,9 +62,9 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     -std=c++20
     -fmodules
     -fbuiltin-module-map
+    -fmodules-cache-path=${CMAKE_BINARY_DIR}/clang_module_cache
+    -fmodule-map-file=/usr/include/c++/v1/module.modulemap
     -I/usr/include/c++/v1
-    -fno-implicit-modules
-    -fno-implicit-module-maps
     $<$<CONFIG:Debug>:-O0 -g -fsanitize=address>
     $<$<CONFIG:Release>:-O3 -march=native>
   )
@@ -113,25 +113,23 @@ target_include_directories(${PROJECT_NAME}
 add_executable(test_demo test/demo1.cpp)
 target_link_libraries(test_demo PRIVATE ${PROJECT_NAME})
 target_compile_options(test_demo PRIVATE
-    -stdlib=libc++
-    -std=c++20
-    -fmodules
-    -fno-implicit-modules
-    -fno-implicit-module-maps
+    -stdlib=libc++ -std=c++20
+    -fmodules -fbuiltin-module-map
+    -fmodules-cache-path=${CMAKE_BINARY_DIR}/clang_module_cache
+    -fmodule-map-file=/usr/include/c++/v1/module.modulemap
     -I/usr/include/c++/v1
-    -fmodules-cache-path=${MODULE_CACHE_DIR}
-  )
-  target_link_options(${PROJECT_NAME} PRIVATE
-    $<$<CONFIG:Debug>:-fsanitize=address>
-    -stdlib=libc++
-    -L/usr/lib/x86_64-linux-gnu
-    -lc++ -lc++abi
-  )
-  target_link_options(test_demo PRIVATE
-    -stdlib=libc++
-    -L/usr/lib/x86_64-linux-gnu
-    -lc++ -lc++abi
-  )
+)
+target_link_options(${PROJECT_NAME} PRIVATE
+  $<$<CONFIG:Debug>:-fsanitize=address>
+  -stdlib=libc++
+  -L/usr/lib/x86_64-linux-gnu
+  -lc++ -lc++abi
+)
+target_link_options(test_demo PRIVATE
+  -stdlib=libc++
+  -L/usr/lib/x86_64-linux-gnu
+  -lc++ -lc++abi
+)
 # if(MSVC)
 #   target_compile_options(test_demo PRIVATE /experimental:module /EHsc)
 #   set(CMAKE_CXX_SCAN_FOR_MODULES ON)
