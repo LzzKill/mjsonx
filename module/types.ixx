@@ -101,7 +101,7 @@ namespace mjsonx::type
         result += m.to_string();
         result += ",";
       }
-      if (!result.length() > 1) result.back() = ']';
+      if (result.length() > 1) result.back() = ']';
       else result += "]";
       return result;
     }
@@ -144,7 +144,7 @@ namespace mjsonx::type
         result += m.to_string();
         result += ",";
       }
-      if (result.length()>1) result.back() = ']';
+      if (result.length() > 1) result.back() = ']';
       else result += "]";
       return result;
     }

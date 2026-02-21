@@ -9,3 +9,11 @@ build/
 
 .idea
 .idea/
+
+.cache
+cache/
+
+CMakePresets.json
+CMakeUserPresets.json
+CMakeSettings.json
+compile_commands.json
