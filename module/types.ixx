@@ -70,9 +70,9 @@ namespace mjsonx::type
     }
   };
 
-  template<typename T>
+  export template<typename T>
   concept json_object = std::is_same_v<boolean_t, T> || std::is_same_v<integer_base_t<int64_t>, T> ||
-                        std::is_same_v<integer_base_t<uint64_t>, T> || std::is_same_v<string_t, T>;
+                        std::is_same_v<integer_base_t<uint64_t>, T> || std::is_same_v<string_t, T>; // 单独导出
 
   // 这是一个一维数组单类型特化
   template<json_object json_type, int N = 0> // N 为预分配
@@ -92,7 +92,7 @@ namespace mjsonx::type
 
     std::string to_string() const override
     {
-      if (!this->object.has_value()) return "null";
+      if (!this->object.has_value()) return "[]";
 
       std::string result = "[";
       const auto &vec = this->object.value();
@@ -101,7 +101,8 @@ namespace mjsonx::type
         result += m.to_string();
         result += ",";
       }
-      result.back() = ']';
+      if (!result.length() > 1) result.back() = ']';
+      else result += "]";
       return result;
     }
   };
@@ -134,17 +135,17 @@ namespace mjsonx::type
     // 支持嵌套数组的 to_string
     std::string to_string() const override
     {
-      if (!this->object.has_value()) return "null";
+      if (!this->object.has_value()) return "[]";
 
       std::string result = "[";
       const auto &vec = this->object.value();
-      for (size_t i = 0; i < vec.size(); ++i)
+      for (const auto &&m : vec)
       {
-        if (i > 0) result += ",";
-        // 递归调用 to_string
-        std::visit([&](const auto &val) { result += val.to_string(); }, vec[i]);
+        result += m.to_string();
+        result += ",";
       }
-      result += "]";
+      if (result.length()>1) result.back() = ']';
+      else result += "]";
       return result;
     }
   };
