@@ -29,6 +29,7 @@ target_sources(${PROJECT_NAME}
   "module/mjsonx.ixx"
   "module/lexer.ixx"
   "module/parser.ixx"
+  "module/serializer.ixx"
 )
 
 target_sources(${PROJECT_NAME}
