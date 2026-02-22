@@ -36,14 +36,13 @@ namespace mjsonx::type
     { return (this->object.has_value()) ? (this->object.value() ? "true" : "false") : "null"; }
   };
 
-  template<typename IntType>
-  class integer_base_t : public JSON_type<IntType> {
+  class integer_t : public JSON_type<int64_t> {
   public:
-    explicit integer_base_t(IntType default_value) : JSON_type<IntType>(default_value) { }
-    explicit integer_base_t() = default;
+    explicit integer_t(int64_t default_value) : JSON_type(default_value) { }
+    explicit integer_t() = default;
     std::string to_string() const override
     {
-      if (this->object.has_value()) return serialize_integer<IntType>(this->object.value());
+      if (this->object.has_value()) return serialize_integer<int64_t>(this->object.value());
       return "null";
     }
   };
@@ -71,10 +70,11 @@ namespace mjsonx::type
   };
 
   export template<typename T>
-  concept json_object = std::is_same_v<boolean_t, T> || std::is_same_v<integer_base_t<int64_t>, T> ||
-                        std::is_same_v<integer_base_t<uint64_t>, T> || std::is_same_v<string_t, T>; // 单独导出
+  concept json_object = std::is_same_v<boolean_t, T> || std::is_same_v<integer_t, T> || std::is_same_v<floating_t, T> ||
+                        std::is_same_v<string_t, T>; // 单独导出
 
   // 这是一个一维数组单类型特化
+  // 尽量用这个
   template<json_object json_type, int N = 0> // N 为预分配
   class array_element_same_t : public JSON_type<std::vector<json_type>> {
   public:
@@ -101,8 +101,10 @@ namespace mjsonx::type
         result += m.to_string();
         result += ",";
       }
-      if (result.length() > 1) result.back() = ']';
-      else result += "]";
+      if (result.length() > 1)
+        result.back() = ']';
+      else
+        result += "]";
       return result;
     }
   };
@@ -144,8 +146,10 @@ namespace mjsonx::type
         result += m.to_string();
         result += ",";
       }
-      if (result.length() > 1) result.back() = ']';
-      else result += "]";
+      if (result.length() > 1)
+        result.back() = ']';
+      else
+        result += "]";
       return result;
     }
   };
@@ -158,11 +162,8 @@ namespace mjsonx::type
   export using boolean = boolean_t;
   export using const_boolean = boolean_t const;
 
-  export using integer = integer_base_t<int64_t>;
-  export using const_integer = integer_base_t<int64_t> const;
-
-  export using uinteger = integer_base_t<uint64_t>;
-  export using const_uinteger = integer_base_t<uint64_t> const;
+  export using integer = integer_t;
+  export using const_integer = integer_t const;
 
   export using floating = floating_t;
   export using const_floating = floating_t const;

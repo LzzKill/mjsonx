@@ -5,7 +5,6 @@ module;
 export module mjsonx.lexer;
 
 import mjsonx.utils;
-import mjsonx.types;
 
 export namespace mjsonx::lexer
 {
@@ -38,11 +37,11 @@ export namespace mjsonx::lexer
     Place_t place;
   };
 
-  class LexerError : public std::runtime_error {
+  class lexer_error : public std::runtime_error {
   public:
-    LexerError(std::string_view msg, Place_t place) :
+    lexer_error(std::string_view msg, Place_t place) :
         runtime_error(
-            std::format("{} in place: {}line {}column, all in file {} pos", msg, place.line, place.column, place.pos))
+            std::format("{} in place: {}line {}column, all in file {} pos | In Lexer Level", msg, place.line, place.column, place.pos))
     { }
   };
 
@@ -95,7 +94,7 @@ export namespace mjsonx::lexer
         if (std::isalpha(this->current)) { return makeKeywordLexerStruct(); }
 
         // 非法字符
-        throw LexerError(std::string_view("unexpected char: " + this->current), this->place);
+        throw lexer_error(std::string_view("unexpected char: " + this->current), this->place);
       }
 
       return makeLexerStruct(TokenType_t::_EOF);
@@ -148,7 +147,7 @@ export namespace mjsonx::lexer
         {
           if (isFloat)
           {
-            throw LexerError("multiple dots", this->place);
+            throw lexer_error("multiple dots", this->place);
             continue;
           }
           isFloat = true;
@@ -196,13 +195,13 @@ export namespace mjsonx::lexer
               result.push_back('\'');
               hasSpecial = true;
               break;
-            default: throw LexerError(std::string_view("Unknown escape: \\" + this->current) , this->place);
+            default: throw lexer_error(std::string_view("Unknown escape: \\" + this->current) , this->place);
           }
         }
         else
           result.push_back(this->current);
       }
-      if (this->current == EOF) throw LexerError("Unclosed string", this->place);
+      if (this->current == EOF) throw lexer_error("Unclosed string", this->place);
       this->next();
       return this->makeLexerStruct(hasSpecial ? TokenType_t::_STRING_SPECIAL : TokenType_t::_STRING, result);
     }
@@ -226,7 +225,7 @@ export namespace mjsonx::lexer
         return this->makeLexerStruct(TokenType_t::_NULL, word);
 
       // 不是关键字，报错（JSON 不允许裸标识符）
-      throw LexerError(std::string_view( "unknown keyword: " + word), this->place);
+      throw lexer_error(std::string_view( "unknown keyword: " + word), this->place);
     }
 
     inline LexerStruct_t makeLexerStruct(TokenType_t token_type, const std::string &value = "") const

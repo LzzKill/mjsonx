@@ -13,11 +13,6 @@ set(CMAKE_CXX_MODULE_SCAN_FOR_MODULES ON)
 set(CMAKE_CXX_MODULE_EXTENSIONS ".ixx")  # 本项目只有ixx，所以就写这个了
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Build compile_commands.json
 
-if (NOT CMAKE_GENERATOR MATCHES "Ninja")
-  message(WARNING "C++20 modules require Ninja generator! Forcing Ninja...")
-  set(CMAKE_GENERATOR "Ninja" CACHE STRING "Build generator" FORCE)
-endif()
-
 target_sources(${PROJECT_NAME}
   PUBLIC
   FILE_SET modules
@@ -30,6 +25,7 @@ target_sources(${PROJECT_NAME}
   "module/lexer.ixx"
   "module/parser.ixx"
   "module/serializer.ixx"
+  "module/ast.ixx"
 )
 
 target_sources(${PROJECT_NAME}
