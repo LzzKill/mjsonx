@@ -25,7 +25,7 @@ target_sources(${PROJECT_NAME}
   "module/lexer.ixx"
   "module/parser.ixx"
   "module/serializer.ixx"
-  "module/ast.ixx"
+  "module/reflection.ixx"
 )
 
 target_sources(${PROJECT_NAME}
